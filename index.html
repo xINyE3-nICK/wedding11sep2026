@@ -436,7 +436,7 @@
                 </div>
             </div>
             
-            <!-- 手风琴项 2：内嵌电子地图（使用检索式嵌入：完美高亮显示仙景楼红点地标 Pin 标志） -->
+            <!-- 手风琴项 2：内嵌电子地图（标准嵌入：完美高亮显示仙景楼红点地标 Pin 标志） -->
             <div class="border border-[#B7AA9A]/20 rounded-xl overflow-hidden bg-white/60">
                 <button class="accordion-header w-full px-6 py-5 flex justify-between items-center text-left text-[#433A33] font-serifSC font-semibold hover:bg-[#B7AA9A]/5 transition-colors focus:outline-none">
                     <span class="flex items-center"><i class="fa-solid fa-earth-americas mr-3 text-[#B7AA9A]"></i>地图资讯 (Interactive Map)</span>
@@ -482,17 +482,6 @@
                     <input type="email" id="email" name="entry.1766597252" class="w-full bg-[#F5F0EA]/40 border border-[#B7AA9A]/30 rounded-lg px-4 py-3 text-[#433A33] focus:outline-none focus:border-[#B7AA9A] focus:ring-1 focus:ring-[#B7AA9A] transition-all" placeholder="example@email.com (选填)">
                 </div>
 
-                <!-- 是否出席 (双语标签) -->
-                <div>
-                    <label class="block text-xs font-semibold text-[#433A33] tracking-wider mb-2" for="attendance">
-                        是否出席 ATTENDANCE <span class="text-rose-400">*</span>
-                    </label>
-                    <select id="attendance" required class="w-full bg-white border border-[#B7AA9A]/30 rounded-lg px-4 py-3 text-[#433A33] focus:outline-none focus:border-[#B7AA9A] transition-all">
-                        <option value="yes" selected>我会出席</option>
-                        <option value="no">遗憾缺席</option>
-                    </select>
-                </div>
-
                 <!-- 与新人关系 (双语标签) -->
                 <div>
                     <label class="block text-xs font-semibold text-[#433A33] tracking-wider mb-2" for="relation">
@@ -507,17 +496,23 @@
                     </select>
                 </div>
 
-                <!-- 出席人数 (双语标签) -->
+                <!-- 出席人数 (双语标签 - 支持到 10人以上) -->
                 <div id="guestsWrapper" class="transition-max-height max-h-[150px] opacity-100 overflow-hidden">
                     <label class="block text-xs font-semibold text-[#433A33] tracking-wider mb-2" for="guests">
                         出席人数 GUESTS <span class="text-rose-400">*</span>
                     </label>
-                    <select id="guests" name="entry.198948399" class="w-full bg-white border border-[#B7AA9A]/30 rounded-lg px-4 py-3 text-[#433A33] focus:outline-none focus:border-[#B7AA9A] transition-all">
+                    <select id="guests" name="entry.198948399" required class="w-full bg-white border border-[#B7AA9A]/30 rounded-lg px-4 py-3 text-[#433A33] focus:outline-none focus:border-[#B7AA9A] transition-all">
                         <option value="1 人" selected>1 人</option>
                         <option value="2 人">2 人</option>
                         <option value="3 人">3 人</option>
                         <option value="4 人">4 人</option>
                         <option value="5 人">5 人</option>
+                        <option value="6 人">6 人</option>
+                        <option value="7 人">7 人</option>
+                        <option value="8 人">8 人</option>
+                        <option value="9 人">9 人</option>
+                        <option value="10 人">10 人</option>
+                        <option value="10人以上">10人以上</option>
                     </select>
                 </div>
 
@@ -682,26 +677,7 @@
             });
         });
 
-        // 5. RSVP 表单动态显示/隐藏“出席人数”
-        const attendanceSelect = document.getElementById('attendance');
-        const guestsWrapper = document.getElementById('guestsWrapper');
-        const guestsSelect = document.getElementById('guests');
-
-        attendanceSelect.addEventListener('change', function() {
-            if (this.value === 'no') {
-                guestsWrapper.style.maxHeight = '0px';
-                guestsWrapper.style.opacity = '0';
-                guestsSelect.removeAttribute('required');
-                guestsSelect.value = '';
-            } else {
-                guestsWrapper.style.maxHeight = '150px';
-                guestsWrapper.style.opacity = '1';
-                guestsSelect.setAttribute('required', 'required');
-                guestsSelect.value = '1 人';
-            }
-        });
-
-        // 6. 隐式 Iframe 提交反馈逻辑
+        // 5. 隐式 Iframe 提交反馈逻辑
         const rsvpForm = document.getElementById('rsvpForm');
         const successModal = document.getElementById('successModal');
         const btnModalClose = document.getElementById('btnModalClose');
@@ -717,13 +693,8 @@
 
         hiddenIframe.addEventListener('load', () => {
             if (submitted) {
-                if (attendanceSelect.value === 'no') {
-                    modalTitle.innerText = "感谢您的真诚心意";
-                    modalDesc.innerHTML = "虽未能相见，您的温情祝福已被我们珍藏入心。<br>祝您一切顺利，幸福常伴！";
-                } else {
-                    modalTitle.innerText = "谢谢您的祝福";
-                    modalDesc.innerHTML = "我们已经成功收到您的出席回函。<br>期待在 2026年9月11日 现场相见！";
-                }
+                modalTitle.innerText = "谢谢您的祝福";
+                modalDesc.innerHTML = "我们已经成功收到您的出席回函。<br>期待在 2026年9月11日 现场相见！";
 
                 successModal.classList.remove('hidden');
                 setTimeout(() => {
@@ -732,9 +703,7 @@
                 }, 50);
                 
                 rsvpForm.reset();
-                guestsWrapper.style.maxHeight = '150px';
-                guestsWrapper.style.opacity = '1';
-                guestsSelect.value = '1 人';
+                document.getElementById('guests').value = '1 人';
                 
                 submitted = false;
             }
